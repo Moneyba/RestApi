@@ -13,7 +13,7 @@ services:
     links:
       - postgres
   postgres:
-    image: postgres:alpine
+    build: src/main/resources/postgres
     restart: always
     environment:
       - POSTGRES_PASSWORD=postgres
