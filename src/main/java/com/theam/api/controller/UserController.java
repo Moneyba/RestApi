@@ -5,6 +5,7 @@ import com.theam.api.dto.UserDto;
 import com.theam.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping(path= "api/user",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
     @Autowired
     private UserService userService;
@@ -33,13 +36,13 @@ public class UserController {
         return userConverter.convertFromEntity(userService.findById(userId));
     }
 
-    @PostMapping("/{userId}")
+    @PostMapping
     public UserDto save(@Valid @RequestBody UserDto userDto) {
         return userConverter.convertFromEntity(userService.save(userDto));
     }
 
-    @PutMapping
-    public UserDto update(@PathVariable long userId, @RequestBody UserDto userDto) {
+    @PutMapping("/{userId}")
+    public UserDto update(@PathVariable long userId, @Valid @RequestBody UserDto userDto) {
         return userConverter.convertFromEntity(userService.update(userId, userDto));
     }
 
@@ -47,6 +50,7 @@ public class UserController {
     public void delete(@PathVariable long userId) {
         userService.deleteById(userId);
     }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

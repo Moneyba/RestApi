@@ -50,10 +50,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(Long id, UserDto userDto) {
+    public User update(Long userId, UserDto userDto) {
         log.info("Trying to update user with username " + userDto.getUsername());
         Optional<User> existingUser = userDao.findByUsername(userDto.getUsername());
-        User userFromDb = this.findById(userDto.getId());
+        User userFromDb = this.findById(userId);
         if (existingUser.isPresent() && !existingUser.get().getId().equals(userFromDb.getId())) {
             log.error("A user with username " + userDto.getUsername() + " already exists" );
             throw new UniqueConstraintException("A user with the given username already exists");

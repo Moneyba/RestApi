@@ -5,7 +5,6 @@ import com.theam.api.dao.CustomerDao;
 import com.theam.api.dto.CustomerDto;
 import com.theam.api.exception.NotFoundException;
 import com.theam.api.model.Customer;
-import com.theam.api.model.User;
 import com.theam.api.service.AuthenticationService;
 import com.theam.api.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerDao customerDao;
-
-    @Autowired
-    private AuthenticationService authenticationService;
 
     @Autowired
     private Customerconverter customerconverter;
@@ -37,9 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer save(CustomerDto customerDto) {
-        User loggedUser = authenticationService.getLoggedUser();
         Customer customer = customerconverter.convertFromDto(customerDto);
-        customer.setCreatedBy(loggedUser);
         return customerDao.save(customer);
     }
 
