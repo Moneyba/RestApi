@@ -1,16 +1,15 @@
 package com.theam.api.dto;
 
-import com.theam.api.model.User;
-
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 public class CustomerDto {
 
     private Long id;
 
+    @NotNull(message = "A name needs to be defined")
     private String name;
 
+    @NotNull(message = "A surname needs to be defined")
     private String surname;
 
     private String photoUrl;
