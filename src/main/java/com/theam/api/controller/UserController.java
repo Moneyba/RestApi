@@ -25,23 +25,22 @@ public class UserController {
 
     @GetMapping
     public List<UserDto> findAll() {
-
         return userConverter.convertFromEntityCollection(userService.findAll());
     }
 
-    @GetMapping("{id}")
-    public UserDto findUser(@PathVariable long id) {
-        return userConverter.convertFromEntity(userService.findById(id));
+    @GetMapping("/{userId}")
+    public UserDto findUser(@PathVariable long userId) {
+        return userConverter.convertFromEntity(userService.findById(userId));
     }
 
-    @PostMapping
+    @PostMapping("/{userId}")
     public UserDto save(@Valid @RequestBody UserDto userDto) {
-        return userConverter.convertFromEntity(userService.save(userConverter.convertFromDto(userDto)));
+        return userConverter.convertFromEntity(userService.save(userDto));
     }
 
     @PutMapping
-    public UserDto update(@RequestBody UserDto userDto) {
-        return userConverter.convertFromEntity(userService.update(userConverter.convertFromDto(userDto)));
+    public UserDto update(@PathVariable long userId, @RequestBody UserDto userDto) {
+        return userConverter.convertFromEntity(userService.update(userId, userDto));
     }
 
     @DeleteMapping("/{userId}")
@@ -51,6 +50,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
     public Map<String, String> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();

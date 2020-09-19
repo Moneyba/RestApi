@@ -20,7 +20,7 @@ public class UserConverter extends GenericConverter<User, UserDto> {
         user.setId(dto.getId());
         user.setUsername(dto.getUsername());
         user.setPassword(dto.getPassword());
-        user.setEnabled(dto.isEnabled());
+        user.setDeleted(false);
         user.setRoles(dto.getRoles().stream()
                 .map(role -> roleDao.findByName(role).orElse(null)).collect(Collectors.toList()));
         return user;
@@ -31,7 +31,6 @@ public class UserConverter extends GenericConverter<User, UserDto> {
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
         userDto.setPassword(user.getPassword());
-        userDto.setEnabled(user.isEnabled());
         userDto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
 
         return userDto;

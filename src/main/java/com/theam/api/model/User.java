@@ -1,5 +1,7 @@
 package com.theam.api.model;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -7,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
+@Where(clause = "deleted = false")
 @Table(name="\"user\"")
 public class User {
     @Id
@@ -23,8 +26,8 @@ public class User {
     @NotNull(message = "A password needs to be defined")
     private String password;
 
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled = true;
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
 
     @NotEmpty(message = "The user must have a role assigned")
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
@@ -56,12 +59,12 @@ public class User {
         this.password = password;
     }
 
-    public Boolean isEnabled() {
-        return enabled;
+    public Boolean isDeleted() {
+        return deleted;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setDeleted(Boolean enabled) {
+        this.deleted = enabled;
     }
 
     public List<Role> getRoles() {

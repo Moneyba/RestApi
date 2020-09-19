@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS "user";
 
 CREATE TABLE "user"(
     user_id serial constraint user_pk primary key,
-    enabled boolean not null,
+    deleted boolean not null,
     username varchar(255) not null unique,
     password varchar(255)
 );
@@ -15,4 +15,13 @@ CREATE TABLE role(
 CREATE TABLE user_role(
     user_id int references "user"(user_id),
     role_id int references role(role_id)
+);
+
+CREATE TABLE "customer"(
+    customer_id serial constraint customer_pk primary key,
+    deleted boolean not null,
+    name varchar(255) not null,
+    surname varchar(255) not null,
+    photoUrl text,
+    created_by_user_id int references "user"(user_id)
 );
