@@ -21,6 +21,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private Customerconverter customerconverter;
 
+    @Autowired
+    private AuthenticationServiceImpl authenticationService;
+
     @Override
     public List<Customer> findAll() {
         return customerDao.findAll();
@@ -34,6 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer save(CustomerDto customerDto) {
         Customer customer = customerconverter.convertFromDto(customerDto);
+        customer.setCreatedBy(authenticationService.getLoggedUser());
         return customerDao.save(customer);
     }
 
