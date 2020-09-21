@@ -1,11 +1,10 @@
 package com.theam.api.service.impl;
 
-import com.theam.api.converter.Customerconverter;
+import com.theam.api.converter.CustomerConverter;
 import com.theam.api.dao.CustomerDao;
 import com.theam.api.dto.CustomerDto;
 import com.theam.api.exception.NotFoundException;
 import com.theam.api.model.Customer;
-import com.theam.api.service.AuthenticationService;
 import com.theam.api.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerDao customerDao;
 
     @Autowired
-    private Customerconverter customerconverter;
+    private CustomerConverter customerconverter;
 
     @Autowired
     private AuthenticationServiceImpl authenticationService;
@@ -43,11 +42,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer update(Long id, CustomerDto customerDto) {
-        Customer customerDB = customerDao.findById(customerDto.getId())
+        customerDao.findById(customerDto.getId())
                 .orElseThrow(()-> new NotFoundException("Customer not found"));
         Customer customerToUpdate = customerconverter.convertFromDto(customerDto);
-        customerToUpdate.setId(id);
-        customerToUpdate.setCreatedBy(customerDB.getCreatedBy());
+        customerToUpdate.setModifiedBy(authenticationService.getLoggedUser());
         return customerDao.save(customerToUpdate);
     }
 

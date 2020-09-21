@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -29,7 +28,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         clients.inMemory()
                 .withClient("clientId")
                 .authorizedGrantTypes("password","authorization_code")
-                .secret(encoder().encode("secret"))
+                .secret("$2a$10$0cA2xAj9Y/r1IFxwdIpZZuvXVHIZXXK/YIZaTE37Tpb42FFHpzaWa")
                 .scopes("user_info")
                 .autoApprove(false)
         ;
@@ -48,16 +47,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     }
 
     @Bean
-    public BCryptPasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-   /* @Bean
-    public TokenStore tokenStore() {
-        return new InMemoryTokenStore();
-    }
-*/
-    @Bean
     public TokenStore tokenStore() {
         return new JwtTokenStore(accessTokenConverter());
     }
@@ -65,7 +54,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         final JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        //converter.setSigningKey("123");
         final KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(
                 new ClassPathResource("mykeystore.jks"), "password".toCharArray());
         converter.setKeyPair(keyStoreKeyFactory.getKeyPair("tomcat"));

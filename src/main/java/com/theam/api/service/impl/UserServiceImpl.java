@@ -10,6 +10,7 @@ import com.theam.api.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,11 +20,15 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Autowired
-    private UserDao userDao;
+    private final UserDao userDao;
+    private final UserConverter userConverter;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserConverter userConverter;
+    public UserServiceImpl(UserDao userDao, UserConverter userConverter, PasswordEncoder passwordEncoder) {
+        this.userDao = userDao;
+        this.userConverter = userConverter;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public List<User> findAll() {
@@ -36,17 +41,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userDao.findByUsername(username).orElseThrow(()-> new NotFoundException("User not found"));
-    }
-
-    @Override
     public User save(UserDto userDto) {
         log.info("Trying to save user with username " + userDto.getUsername());
         userDao.findByUsername(userDto.getUsername())
                 .ifPresent(function -> { throw new UniqueConstraintException("A user with the given username already exists");});
-        User user = userConverter.convertFromDto(userDto);
-        return userDao.save(user);
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        return userDao.save(userConverter.convertFromDto(userDto));
     }
 
     @Override
@@ -58,7 +58,12 @@ public class UserServiceImpl implements UserService {
             log.error("A user with username " + userDto.getUsername() + " already exists" );
             throw new UniqueConstraintException("A user with the given username already exists");
         }
-        return userDao.save(userConverter.convertFromDto(userDto));
+        User userToUpdate = userConverter.convertFromDto(userDto);
+        String password = (userDto.getPassword() == null) ?
+                userFromDb.getPassword() :
+                passwordEncoder.encode(userDto.getPassword());
+        userToUpdate.setPassword(password);
+        return userDao.save(userToUpdate);
     }
 
     @Override

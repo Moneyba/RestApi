@@ -22,6 +22,7 @@ CREATE TABLE "customer"(
     deleted boolean not null,
     name varchar(255) not null,
     surname varchar(255) not null,
-    photoUrl text,
-    created_by_user_id int references "user"(user_id)
+    photo_url text,
+    created_by_user_id int references "user"(user_id) not null,
+    modified_by_user_id int references "user"(user_id)
 );

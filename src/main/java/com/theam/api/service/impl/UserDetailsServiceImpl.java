@@ -21,13 +21,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserDao userDao;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDao.findByUsername(username).orElseThrow(()-> new NotFoundException("User not found"));
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         user.getRoles()
                 .forEach(role -> grantedAuthorities.add(new SimpleGrantedAuthority(role.getName())));

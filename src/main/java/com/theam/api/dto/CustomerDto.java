@@ -16,6 +16,8 @@ public class CustomerDto {
 
     private UserDto createdBy;
 
+    private UserDto modifiedBy;
+
     public Long getId() {
         return id;
     }
@@ -55,4 +57,8 @@ public class CustomerDto {
     public void setCreatedBy(UserDto createdBy) {
         this.createdBy = createdBy;
     }
+
+    public UserDto getModifiedBy() { return modifiedBy; }
+
+    public void setModifiedBy(UserDto modifiedBy) { this.modifiedBy = modifiedBy; }
 }

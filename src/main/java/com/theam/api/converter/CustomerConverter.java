@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Customerconverter extends GenericConverter<Customer, CustomerDto> {
+public class CustomerConverter extends GenericConverter<Customer, CustomerDto> {
 
     @Autowired UserConverter userConverter;
 
@@ -20,6 +20,9 @@ public class Customerconverter extends GenericConverter<Customer, CustomerDto> {
         if (dto.getCreatedBy() != null) {
             customer.setCreatedBy(userConverter.convertFromDto(dto.getCreatedBy()));
         }
+        if (dto.getModifiedBy() != null) {
+            customer.setModifiedBy(userConverter.convertFromDto(dto.getModifiedBy()));
+        }
         return customer;
     }
 
@@ -30,8 +33,9 @@ public class Customerconverter extends GenericConverter<Customer, CustomerDto> {
         customerDto.setName(customer.getName());
         customerDto.setSurname(customer.getSurname());
         customerDto.setPhotoUrl(customer.getPhotoUrl());
-        if (customer.getCreatedBy() != null) {
-            customerDto.setCreatedBy(userConverter.convertFromEntity(customer.getCreatedBy()));
+        customerDto.setCreatedBy(userConverter.convertFromEntity(customer.getCreatedBy()));
+        if (customer.getModifiedBy() != null) {
+            customerDto.setModifiedBy(userConverter.convertFromEntity(customer.getModifiedBy()));
         }
         return customerDto;
     }

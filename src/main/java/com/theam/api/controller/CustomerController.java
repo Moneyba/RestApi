@@ -1,6 +1,6 @@
 package com.theam.api.controller;
 
-import com.theam.api.converter.Customerconverter;
+import com.theam.api.converter.CustomerConverter;
 import com.theam.api.dto.CustomerDto;
 import com.theam.api.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     @Autowired
-    private Customerconverter customerconverter;
+    private CustomerConverter customerconverter;
 
     @GetMapping
     public List<CustomerDto> findAll() {

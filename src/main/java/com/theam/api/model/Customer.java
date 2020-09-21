@@ -32,6 +32,9 @@ public class Customer {
     @NotNull
     private User createdBy;
 
+    @ManyToOne
+    private User modifiedBy;
+
     public Long getId() {
         return id;
     }
@@ -79,4 +82,8 @@ public class Customer {
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
+
+    public User getModifiedBy() { return modifiedBy; }
+
+    public void setModifiedBy(User modifiedBy) { this.modifiedBy = modifiedBy; }
 }

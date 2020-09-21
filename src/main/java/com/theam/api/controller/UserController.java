@@ -2,6 +2,7 @@ package com.theam.api.controller;
 
 import com.theam.api.converter.UserConverter;
 import com.theam.api.dto.UserDto;
+import com.theam.api.model.User;
 import com.theam.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
