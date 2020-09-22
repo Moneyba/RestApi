@@ -2,9 +2,7 @@ package com.theam.api.controller;
 
 import com.theam.api.converter.UserConverter;
 import com.theam.api.dto.UserDto;
-import com.theam.api.model.User;
 import com.theam.api.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,32 +17,34 @@ import java.util.Map;
 
 @RestController
 @PreAuthorize("hasRole('ROLE_ADMIN')")
-@RequestMapping(path= "api/user",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("api/user")
 public class UserController {
-    @Autowired
-    private UserService userService;
 
-    @Autowired
-    private UserConverter userConverter;
+    private final UserService userService;
 
-    @GetMapping
+    private final UserConverter userConverter;
+
+    public UserController(UserService userService, UserConverter userConverter) {
+        this.userService = userService;
+        this.userConverter = userConverter;
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UserDto> findAll() {
         return userConverter.convertFromEntityCollection(userService.findAll());
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping(path = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDto findUser(@PathVariable long userId) {
         return userConverter.convertFromEntity(userService.findById(userId));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDto save(@Valid @RequestBody UserDto userDto) {
         return userConverter.convertFromEntity(userService.save(userDto));
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping(path = "/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDto update(@PathVariable long userId, @Valid @RequestBody UserDto userDto) {
         return userConverter.convertFromEntity(userService.update(userId, userDto));
     }
@@ -67,4 +67,5 @@ public class UserController {
         });
         return errors;
     }
+
 }

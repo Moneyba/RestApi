@@ -2,13 +2,16 @@ package com.theam.api.converter;
 
 import com.theam.api.dto.CustomerDto;
 import com.theam.api.model.Customer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CustomerConverter extends GenericConverter<Customer, CustomerDto> {
 
-    @Autowired UserConverter userConverter;
+    final UserConverter userConverter;
+
+    public CustomerConverter(UserConverter userConverter) {
+        this.userConverter = userConverter;
+    }
 
     @Override
     public Customer convertFromDto(CustomerDto dto) {

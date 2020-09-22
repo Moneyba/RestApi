@@ -9,7 +9,6 @@ import com.theam.api.model.User;
 import com.theam.api.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +58,7 @@ public class UserServiceImpl implements UserService {
             throw new UniqueConstraintException("A user with the given username already exists");
         }
         User userToUpdate = userConverter.convertFromDto(userDto);
-        String password = (userDto.getPassword() == null) ?
+        String password = (userDto.getPassword().isEmpty() || userDto.getPassword() == null) ?
                 userFromDb.getPassword() :
                 passwordEncoder.encode(userDto.getPassword());
         userToUpdate.setPassword(password);

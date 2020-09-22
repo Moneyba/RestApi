@@ -18,6 +18,18 @@ public class CustomerDto {
 
     private UserDto modifiedBy;
 
+    public CustomerDto() {
+    }
+
+    public CustomerDto(Long id, @NotNull(message = "A name needs to be defined") String name, @NotNull(message = "A surname needs to be defined") String surname, String photoUrl, UserDto createdBy, UserDto modifiedBy) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.photoUrl = photoUrl;
+        this.createdBy = createdBy;
+        this.modifiedBy = modifiedBy;
+    }
+
     public Long getId() {
         return id;
     }

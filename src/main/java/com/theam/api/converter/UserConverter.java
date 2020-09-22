@@ -4,7 +4,6 @@ import com.theam.api.dao.RoleDao;
 import com.theam.api.dto.UserDto;
 import com.theam.api.model.Role;
 import com.theam.api.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -12,16 +11,19 @@ import java.util.stream.Collectors;
 @Component
 public class UserConverter extends GenericConverter<User, UserDto> {
 
-    @Autowired
-    private RoleDao roleDao;
+    private final String hiddenPassword = "*****";
+
+    private final RoleDao roleDao;
+
+    public UserConverter(RoleDao roleDao) {
+        this.roleDao = roleDao;
+    }
 
     public User convertFromDto(UserDto dto) {
         User user = new User();
         user.setId(dto.getId());
         user.setUsername(dto.getUsername());
-        if(dto.getPassword() != null) {
-            user.setPassword(dto.getPassword());
-        }
+        user.setPassword(hiddenPassword.equals(dto.getPassword()) || dto.getPassword() == null ? "" : dto.getPassword());
         user.setDeleted(false);
         user.setRoles(dto.getRoles().stream()
                 .map(role -> roleDao.findByName(role).orElse(null)).collect(Collectors.toList()));
@@ -32,6 +34,7 @@ public class UserConverter extends GenericConverter<User, UserDto> {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
+        userDto.setPassword(hiddenPassword);
         userDto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
         return userDto;
     }

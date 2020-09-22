@@ -16,32 +16,33 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path= "api/customer",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("api/customer")
 public class CustomerController {
-    @Autowired
-    private CustomerService customerService;
+    private final CustomerService customerService;
 
-    @Autowired
-    private CustomerConverter customerconverter;
+    private final CustomerConverter customerconverter;
 
-    @GetMapping
+    public CustomerController(CustomerService customerService, CustomerConverter customerconverter) {
+        this.customerService = customerService;
+        this.customerconverter = customerconverter;
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CustomerDto> findAll() {
         return customerconverter.convertFromEntityCollection(customerService.findAll());
     }
 
-    @GetMapping("/{customerId}")
+    @GetMapping(path = "/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CustomerDto findCustomer(@PathVariable long customerId) {
         return customerconverter.convertFromEntity(customerService.findById(customerId));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public CustomerDto save(@Valid @RequestBody CustomerDto customerDto) {
         return customerconverter.convertFromEntity(customerService.save(customerDto));
     }
 
-    @PutMapping("/{customerId}")
+    @PutMapping(path = "/{customerId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public CustomerDto update(@PathVariable long customerId, @Valid @RequestBody CustomerDto customerDto) {
         return customerconverter.convertFromEntity(customerService.update(customerId, customerDto));
     }

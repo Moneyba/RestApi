@@ -1,69 +1,132 @@
 package com.theam.api.controller;
 
-import org.hamcrest.core.Is;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.theam.api.converter.CustomerConverter;
+import com.theam.api.dto.CustomerDto;
+import com.theam.api.dto.UserDto;
+import com.theam.api.model.Customer;
+import com.theam.api.service.CustomerService;
+import com.theam.api.service.impl.UserDetailsServiceImpl;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static com.theam.api.controller.ResponseBodyMatchers.responseBody;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(CustomerController.class)
 @AutoConfigureMockMvc
 public class CustomerControllerTest {
     private static final String CUSTOMER_ENDPOINT = "/api/customer";
 
-    @Autowired
-    CustomerController customerController;
+    @MockBean
+    private CustomerConverter customerConverter;
+
+    @MockBean
+    private CustomerService customerService;
+
+    @Qualifier("userDetailsServiceImpl")
+    @MockBean
+    private UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
+
     @Test
-    public void whenPostRequestToCustomerAndValidCustomer_thenCorrectResponse() throws Exception {
-        String customer = "{" +
-                "\"name\": \"Zelda\"," +
-                "\"surname\":\"Orwell\"," +
-                "\"deleted\":\"false\"," +
-                "\"roles\":[ \"ROLE_ADMIN\"]," +
-                "\"createdBy\": {" +
-                "\"id\": \"1\"," +
-                "\"username\": \"finalboss@example.com\"," +
-                "\"password\":\"Asd_1234\"," +
-                "\"deleted\":\"false\"," +
-                "\"roles\":[ \"ROLE_ADMIN\"]" +
-                "}" +
-                "}";
-        mockMvc.perform(MockMvcRequestBuilders.post(CUSTOMER_ENDPOINT)
-                .content(customer)
+    @WithMockUser(username="mockedUser")
+    public void whenUserRequestTheCustomers_thenTheCustomerListIsReturned() throws Exception{
+        UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
+        CustomerDto customer1 = new CustomerDto(1L,"Zelda", "Orwell", null, userDto,null);
+        CustomerDto customer2 = new CustomerDto(2L,"Salvador", "Dali", null, userDto,null);
+        List<CustomerDto> customers = Arrays.asList(customer1, customer2);
+        when(customerService.findAll()).thenReturn(new ArrayList<>());
+        when(customerConverter.convertFromEntityCollection(anyCollection())).thenReturn(customers);
+        mockMvc.perform(MockMvcRequestBuilders.get(CUSTOMER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(responseBody().containsObjectAsJson(customers));
     }
 
     @Test
-    public void whenPostRequestToCustomerAndInvalidName_thenCorrectResponse() throws Exception {
-        String customer = "{" +
-                "\"surname\":\"Orwell\"," +
-                "\"deleted\":\"false\"," +
-                "\"roles\":[ \"ROLE_ADMIN\"]," +
-                "\"createdBy\": {" +
-                "\"id\": \"1\"," +
-                "\"username\": \"finalboss@example.com\"," +
-                "\"password\":\"Asd_1234\"," +
-                "\"deleted\":\"false\"," +
-                "\"roles\":[ \"ROLE_ADMIN\"]" +
-                "}" +
-                "}";
-        mockMvc.perform(MockMvcRequestBuilders.post(CUSTOMER_ENDPOINT)
-                .content(customer)
+    @WithMockUser(username="mockedUser")
+    public void whenUserRequestCustomerInformation_thenTheCustomerIsReturned() throws Exception {
+        String photoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQL59nSXkNhqkVAzpGeRdRbFre1-JEBbQhaCA&usqp=CAU";
+        UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
+        CustomerDto customerDto = new CustomerDto(1L,"Zelda", "Orwell", photoUrl, userDto,null);
+        when(customerService.findById(anyLong())).thenReturn(new Customer());
+        when(customerConverter.convertFromEntity(any(Customer.class))).thenReturn(customerDto);
+        mockMvc.perform(MockMvcRequestBuilders.get(CUSTOMER_ENDPOINT + "/1")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Is.is("A name needs to be defined")))
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_VALUE));
+                .andExpect(status().isOk())
+                .andExpect(responseBody().containsObjectAsJson(customerDto));
     }
+
+    @Test
+    @WithMockUser(username="mockedUser")
+    public void whenUserCreateCustomer_thenTheCustomerIsReturned() throws Exception {
+        UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
+        CustomerDto customerDto = new CustomerDto(1L,"Zelda", "Orwell", null, userDto,null);
+        when(customerService.save(any(CustomerDto.class))).thenReturn(new Customer());
+        when(customerConverter.convertFromEntity(any(Customer.class))).thenReturn(customerDto);
+        mockMvc.perform(MockMvcRequestBuilders.post(CUSTOMER_ENDPOINT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(customerDto)))
+                .andExpect(status().isOk())
+                .andExpect(responseBody().containsObjectAsJson(customerDto));
+    }
+
+    @Test
+    @WithMockUser(username="mockedUser")
+    public void whenUserUpdateCustomer_thenTheUpdatedCustomerIsReturned() throws Exception {
+        UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
+        CustomerDto customerDto = new CustomerDto(1L,"Zelda", "Orwell", null, userDto,null);
+        when(customerService.update(anyLong(), any(CustomerDto.class))).thenReturn(new Customer());
+        when(customerConverter.convertFromEntity(any(Customer.class))).thenReturn(customerDto);
+        mockMvc.perform(MockMvcRequestBuilders.put(CUSTOMER_ENDPOINT + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(customerDto)))
+                .andExpect(status().isOk())
+                .andExpect(responseBody().containsObjectAsJson(customerDto));
+    }
+
+    @Test
+    @WithMockUser(username="mockedUser")
+    public void whenUserDeleteCustomer_thenReturns200() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete(CUSTOMER_ENDPOINT + "/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username="mockedUser")
+    public void whenNullCustomerName_thenReturns400() throws Exception {
+        UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
+        CustomerDto customerDto = new CustomerDto(1L,null, "Orwell", null, userDto,null);
+        mockMvc.perform(MockMvcRequestBuilders.post(CUSTOMER_ENDPOINT)
+                .content(objectMapper.writeValueAsString(customerDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
 }

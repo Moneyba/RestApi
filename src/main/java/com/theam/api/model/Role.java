@@ -5,6 +5,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "role")
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id", nullable = false, updatable = false)
@@ -12,6 +13,9 @@ public class Role {
 
     @Column(name = "role_name", nullable = false, unique = true)
     private String name;
+
+    public Role() {
+    }
 
     public Long getId() {
         return id;

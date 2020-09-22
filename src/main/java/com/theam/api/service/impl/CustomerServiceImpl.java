@@ -5,8 +5,8 @@ import com.theam.api.dao.CustomerDao;
 import com.theam.api.dto.CustomerDto;
 import com.theam.api.exception.NotFoundException;
 import com.theam.api.model.Customer;
+import com.theam.api.service.AuthenticationService;
 import com.theam.api.service.CustomerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,14 +14,17 @@ import java.util.List;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    @Autowired
-    private CustomerDao customerDao;
+    private final CustomerDao customerDao;
 
-    @Autowired
-    private CustomerConverter customerconverter;
+    private final CustomerConverter customerconverter;
 
-    @Autowired
-    private AuthenticationServiceImpl authenticationService;
+    private final AuthenticationService authenticationService;
+
+    public CustomerServiceImpl(CustomerDao customerDao, CustomerConverter customerconverter, AuthenticationService authenticationService) {
+        this.customerDao = customerDao;
+        this.customerconverter = customerconverter;
+        this.authenticationService = authenticationService;
+    }
 
     @Override
     public List<Customer> findAll() {

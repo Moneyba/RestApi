@@ -35,6 +35,17 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "role_id")})
     private List<Role> roles;
 
+    public User() {
+    }
+
+    public User(Long id, @NotNull(message = "A username needs to be defined") @Email String username, @NotNull(message = "A password needs to be defined") String password, Boolean deleted, @NotEmpty(message = "The user must have a role assigned") List<Role> roles) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.deleted = deleted;
+        this.roles = roles;
+    }
+
     public Long getId() {
         return id;
     }
@@ -47,8 +58,8 @@ public class User {
         return username;
     }
 
-    public void setUsername(String name) {
-        this.username = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -59,12 +70,12 @@ public class User {
         this.password = password;
     }
 
-    public Boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(Boolean enabled) {
-        this.deleted = enabled;
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     public List<Role> getRoles() {

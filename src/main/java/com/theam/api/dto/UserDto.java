@@ -17,6 +17,16 @@ public class UserDto {
 
     private String password;
 
+    public UserDto() {
+    }
+
+    public UserDto(Long id, @NotNull(message = "A username needs to be defined") @Email String username, @NotEmpty(message = "The user must have a role assigned") List<String> roles, String password) {
+        this.id = id;
+        this.username = username;
+        this.roles = roles;
+        this.password = password;
+    }
+
     public Long getId() {
         return id;
     }
