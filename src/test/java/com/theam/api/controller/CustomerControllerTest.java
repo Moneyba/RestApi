@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(CustomerController.class)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class CustomerControllerTest {
     private static final String CUSTOMER_ENDPOINT = "/api/customer";
 
@@ -52,12 +52,11 @@ public class CustomerControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-
     @Test
     @WithMockUser(username="mockedUser")
     public void whenUserRequestTheCustomers_thenTheCustomerListIsReturned() throws Exception{
         UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
-        CustomerDto customer1 = new CustomerDto(1L,"Zelda", "Orwell", null, userDto,null);
+        CustomerDto customer1 = new CustomerDto(1L,"Cesar", "Manrique", null, userDto,null);
         CustomerDto customer2 = new CustomerDto(2L,"Salvador", "Dali", null, userDto,null);
         List<CustomerDto> customers = Arrays.asList(customer1, customer2);
         when(customerService.findAll()).thenReturn(new ArrayList<>());
@@ -87,7 +86,8 @@ public class CustomerControllerTest {
     public void whenUserCreateCustomer_thenTheCustomerIsReturned() throws Exception {
         UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
         CustomerDto customerDto = new CustomerDto(1L,"Zelda", "Orwell", null, userDto,null);
-        when(customerService.save(any(CustomerDto.class))).thenReturn(new Customer());
+        when(customerConverter.convertFromDto(any(CustomerDto.class))).thenReturn(new Customer());
+        when(customerService.save(any(Customer.class))).thenReturn(new Customer());
         when(customerConverter.convertFromEntity(any(Customer.class))).thenReturn(customerDto);
         mockMvc.perform(MockMvcRequestBuilders.post(CUSTOMER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -101,7 +101,8 @@ public class CustomerControllerTest {
     public void whenUserUpdateCustomer_thenTheUpdatedCustomerIsReturned() throws Exception {
         UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
         CustomerDto customerDto = new CustomerDto(1L,"Zelda", "Orwell", null, userDto,null);
-        when(customerService.update(anyLong(), any(CustomerDto.class))).thenReturn(new Customer());
+        when(customerConverter.convertFromDto(any(CustomerDto.class))).thenReturn(new Customer());
+        when(customerService.update(anyLong(), any(Customer.class))).thenReturn(new Customer());
         when(customerConverter.convertFromEntity(any(Customer.class))).thenReturn(customerDto);
         mockMvc.perform(MockMvcRequestBuilders.put(CUSTOMER_ENDPOINT + "/1")
                 .contentType(MediaType.APPLICATION_JSON)

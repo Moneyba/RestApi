@@ -38,13 +38,10 @@ class UserServiceImplTest {
 
     @Test
     void savedUserHasUsername() {
-        UserDto userDto = new UserDto();
-        userDto.setUsername("a@b.c");
         User user = new User();
         user.setUsername("a@b.c");
-        when(userConverter.convertFromDto(any(UserDto.class))).thenReturn(user);
         when(userDao.save(any(User.class))).then(returnsFirstArg());
-        User savedUser = userServiceImpl.save(userDto);
+        User savedUser = userServiceImpl.save(user);
         assertThat(savedUser).hasUsername();
     }
 

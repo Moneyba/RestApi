@@ -71,7 +71,8 @@ public class UserControllerTest {
     @WithMockUser(username="mockedUser", roles={"ADMIN"})
     public void whenCreateUser_thenTheUserIsReturned() throws Exception {
         UserDto userDto = new UserDto(null,  "user@theam.com", Collections.singletonList("ROLE_USER"), null);
-        when(userService.save(any(UserDto.class))).thenReturn(new User());
+        when(userConverter.convertFromDto(any(UserDto.class))).thenReturn(new User());
+        when(userService.save(any(User.class))).thenReturn(new User());
         when(userConverter.convertFromEntity(any(User.class))).thenReturn(userDto);
         mockMvc.perform(MockMvcRequestBuilders.post(USER_ENDPOINT)
                 .content(objectMapper.writeValueAsString(userDto))
@@ -87,7 +88,8 @@ public class UserControllerTest {
     @WithMockUser(username="mockedUser", roles={"ADMIN"})
     public void whenUpdateUser_thenTheUpdatedUserIsReturned() throws Exception {
         UserDto userDto = new UserDto(1L, "user@theam.com", Collections.singletonList("ROLE_USER"), null);
-        when(userService.update(anyLong(), any(UserDto.class))).thenReturn(new User());
+        when(userConverter.convertFromDto(any(UserDto.class))).thenReturn(new User());
+        when(userService.update(anyLong(), any(User.class))).thenReturn(new User());
         when(userConverter.convertFromEntity(any(User.class))).thenReturn(userDto);
         mockMvc.perform(MockMvcRequestBuilders.put(USER_ENDPOINT + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +110,8 @@ public class UserControllerTest {
     @WithMockUser(username="mockedUser", roles={"ADMIN"})
     public void whenChangeAdminStatus_thenReturns200() throws Exception {
         UserDto userDto = new UserDto(3L, "newAdmin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
-        when(userService.update(anyLong(), any(UserDto.class))).thenReturn(new User());
+        when(userConverter.convertFromDto(any(UserDto.class))).thenReturn(new User());
+        when(userService.update(anyLong(), any(User.class))).thenReturn(new User());
         when(userConverter.convertFromEntity(any(User.class))).thenReturn(userDto);
         mockMvc.perform(MockMvcRequestBuilders.put(USER_ENDPOINT + "/3")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -136,22 +139,6 @@ public class UserControllerTest {
                 .content(objectMapper.writeValueAsString(userDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @WithMockUser(username="mockedUser", roles={"ADMIN"})
-    public void whenValidInput_thenMapsToBusinessModel() throws Exception {
-        UserDto userDto = new UserDto(null, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), "***");
-        mockMvc.perform(MockMvcRequestBuilders.post(USER_ENDPOINT)
-                .content(objectMapper.writeValueAsString(userDto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-        ArgumentCaptor<UserDto> userCaptor = ArgumentCaptor.forClass(UserDto.class);
-        verify(userService, times(1)).save(userCaptor.capture());
-        assertThat(userCaptor.getValue().getUsername()).isEqualTo("admin@theam.com");
-        assertThat(userCaptor.getValue().getPassword()).isEqualTo("***");
-        assertThat(userCaptor.getValue().getRoles()).isEqualTo(Collections.singletonList("ROLE_ADMIN"));
-
     }
 
     @Test

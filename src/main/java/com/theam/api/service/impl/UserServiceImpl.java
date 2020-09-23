@@ -1,8 +1,6 @@
 package com.theam.api.service.impl;
 
-import com.theam.api.converter.UserConverter;
 import com.theam.api.dao.UserDao;
-import com.theam.api.dto.UserDto;
 import com.theam.api.exception.NotFoundException;
 import com.theam.api.exception.UniqueConstraintException;
 import com.theam.api.model.User;
@@ -20,12 +18,10 @@ public class UserServiceImpl implements UserService {
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserDao userDao;
-    private final UserConverter userConverter;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserDao userDao, UserConverter userConverter, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
-        this.userConverter = userConverter;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -35,42 +31,52 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(long id) {
+    public User findById(Long id) {
         return userDao.findById(id).orElseThrow(()-> new NotFoundException("User not found"));
     }
 
     @Override
-    public User save(UserDto userDto) {
-        log.info("Trying to save user with username " + userDto.getUsername());
-        userDao.findByUsername(userDto.getUsername())
-                .ifPresent(function -> { throw new UniqueConstraintException("A user with the given username already exists");});
-        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        return userDao.save(userConverter.convertFromDto(userDto));
+    public User save(User user) {
+        log.info("Trying to save user with username " + user.getUsername());
+        userDao.findByUsername(user.getUsername())
+                .ifPresent(function -> { throw new UniqueConstraintException("A user with the given username already exists"); });
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userDao.save(user);
     }
 
     @Override
-    public User update(Long userId, UserDto userDto) {
-        log.info("Trying to update user with username " + userDto.getUsername());
-        Optional<User> existingUser = userDao.findByUsername(userDto.getUsername());
-        User userFromDb = this.findById(userId);
-        if (existingUser.isPresent() && !existingUser.get().getId().equals(userFromDb.getId())) {
-            log.error("A user with username " + userDto.getUsername() + " already exists" );
+    public User update(Long userId, User user) {
+        log.info("Trying to update user with username " + user.getUsername());
+        User userFromDb = this.findById(user.getId());
+        this.checkIfUserExists(user, userFromDb);
+        user.setPassword(this.findPassword(user, userFromDb));
+        return userDao.save(user);
+    }
+
+    private void checkIfUserExists(User user, User userFromDb) {
+        Optional<User> existingUser = userDao.findByUsername(user.getUsername());
+        if (existingUser.isPresent() && !this.updatedUserIdIsEqualToUserFromDbId(existingUser.get(), userFromDb)) {
+            log.error("A user with username " + user.getUsername() + " already exists" );
             throw new UniqueConstraintException("A user with the given username already exists");
         }
-        User userToUpdate = userConverter.convertFromDto(userDto);
-        String password = (userDto.getPassword().isEmpty() || userDto.getPassword() == null) ?
+    }
+
+    private Boolean updatedUserIdIsEqualToUserFromDbId(User updatedUser, User userFromDb) {
+        return updatedUser.getId().equals(userFromDb.getId());
+    }
+
+    private String findPassword(User user, User userFromDb) {
+        return (user.getPassword().isEmpty() || user.getPassword() == null) ?
                 userFromDb.getPassword() :
-                passwordEncoder.encode(userDto.getPassword());
-        userToUpdate.setPassword(password);
-        return userDao.save(userToUpdate);
+                passwordEncoder.encode(user.getPassword());
     }
 
     @Override
     public void deleteById(Long userId) {
+        log.info("Trying to delete user with id " + userId);
         User user = findById(userId);
         user.setDeleted(false);
         userDao.save(user);
     }
-
 
 }

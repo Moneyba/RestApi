@@ -35,6 +35,19 @@ public class Customer {
     @ManyToOne
     private User modifiedBy;
 
+    public Customer() {
+    }
+
+    public Customer(Long id, @NotNull(message = "A name needs to be defined") String name, @NotNull(message = "A surname needs to be defined") String surname, String photoUrl, Boolean deleted, @NotNull User createdBy, User modifiedBy) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.photoUrl = photoUrl;
+        this.deleted = deleted;
+        this.createdBy = createdBy;
+        this.modifiedBy = modifiedBy;
+    }
+
     public Long getId() {
         return id;
     }

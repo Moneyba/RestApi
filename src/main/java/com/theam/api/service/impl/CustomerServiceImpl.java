@@ -1,12 +1,12 @@
 package com.theam.api.service.impl;
 
-import com.theam.api.converter.CustomerConverter;
 import com.theam.api.dao.CustomerDao;
-import com.theam.api.dto.CustomerDto;
 import com.theam.api.exception.NotFoundException;
 import com.theam.api.model.Customer;
 import com.theam.api.service.AuthenticationService;
 import com.theam.api.service.CustomerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,15 +14,14 @@ import java.util.List;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    private final CustomerDao customerDao;
+    private static final Logger log = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
-    private final CustomerConverter customerconverter;
+    private final CustomerDao customerDao;
 
     private final AuthenticationService authenticationService;
 
-    public CustomerServiceImpl(CustomerDao customerDao, CustomerConverter customerconverter, AuthenticationService authenticationService) {
+    public CustomerServiceImpl(CustomerDao customerDao, AuthenticationService authenticationService) {
         this.customerDao = customerDao;
-        this.customerconverter = customerconverter;
         this.authenticationService = authenticationService;
     }
 
@@ -32,28 +31,29 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer findById(long id) {
+    public Customer findById(Long id) {
         return customerDao.findById(id).orElseThrow(()-> new NotFoundException("Customer not found"));
     }
 
     @Override
-    public Customer save(CustomerDto customerDto) {
-        Customer customer = customerconverter.convertFromDto(customerDto);
+    public Customer save(Customer customer) {
+        log.info("Trying to save customer with id " + customer.getId());
         customer.setCreatedBy(authenticationService.getLoggedUser());
         return customerDao.save(customer);
     }
 
     @Override
-    public Customer update(Long id, CustomerDto customerDto) {
-        customerDao.findById(customerDto.getId())
+    public Customer update(Long id, Customer customer) {
+        log.info("Trying to update customer with id " + customer.getId());
+        customerDao.findById(customer.getId())
                 .orElseThrow(()-> new NotFoundException("Customer not found"));
-        Customer customerToUpdate = customerconverter.convertFromDto(customerDto);
-        customerToUpdate.setModifiedBy(authenticationService.getLoggedUser());
-        return customerDao.save(customerToUpdate);
+        customer.setModifiedBy(authenticationService.getLoggedUser());
+        return customerDao.save(customer);
     }
 
     @Override
     public void deleteById(Long customerId) {
+        log.info("Trying to delete user with id " + customerId);
         Customer customerToDelete = customerDao.findById(customerId)
                 .orElseThrow(()-> new NotFoundException("Customer not found"));
         customerToDelete.setDeleted(true);

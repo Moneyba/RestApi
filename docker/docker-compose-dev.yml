@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   postgres:
-    build: src/main/resources/postgres
+    build: ../src/main/resources/postgres
     restart: always
     environment:
       - POSTGRES_PASSWORD=postgres

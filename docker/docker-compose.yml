@@ -2,7 +2,7 @@ version: '3.7'
 services:
   app:
     container_name: api
-    build: ./
+    build: ..
     ports:
       - "8080:8080"
     environment:
@@ -13,7 +13,7 @@ services:
     links:
       - postgres
   postgres:
-    build: src/main/resources/postgres
+    build: ../src/main/resources/postgres
     restart: always
     environment:
       - POSTGRES_PASSWORD=postgres

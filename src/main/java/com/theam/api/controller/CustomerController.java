@@ -2,18 +2,13 @@ package com.theam.api.controller;
 
 import com.theam.api.converter.CustomerConverter;
 import com.theam.api.dto.CustomerDto;
+import com.theam.api.model.Customer;
 import com.theam.api.service.CustomerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/customer")
@@ -33,36 +28,25 @@ public class CustomerController {
     }
 
     @GetMapping(path = "/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CustomerDto findCustomer(@PathVariable long customerId) {
+    public CustomerDto findCustomer(@PathVariable Long customerId) {
         return customerconverter.convertFromEntity(customerService.findById(customerId));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public CustomerDto save(@Valid @RequestBody CustomerDto customerDto) {
-        return customerconverter.convertFromEntity(customerService.save(customerDto));
+        Customer customer = customerconverter.convertFromDto(customerDto);
+        return customerconverter.convertFromEntity(customerService.save(customer));
     }
 
     @PutMapping(path = "/{customerId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CustomerDto update(@PathVariable long customerId, @Valid @RequestBody CustomerDto customerDto) {
-        return customerconverter.convertFromEntity(customerService.update(customerId, customerDto));
+    public CustomerDto update(@PathVariable Long customerId, @Valid @RequestBody CustomerDto customerDto) {
+        Customer customer = customerconverter.convertFromDto(customerDto);
+        return customerconverter.convertFromEntity(customerService.update(customerId, customer));
     }
 
     @DeleteMapping("/{customerId}")
-    public void delete(@PathVariable long customerId) {
+    public void delete(@PathVariable Long customerId) {
         customerService.deleteById(customerId);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseBody
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
 }
