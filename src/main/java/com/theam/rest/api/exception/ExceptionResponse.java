@@ -1,18 +1,19 @@
 package com.theam.rest.api.exception;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@XmlRootElement(name = "error")
-public class ErrorResponse
+public class ExceptionResponse
 {
-    public ErrorResponse(String message, List<String> details) {
-        super();
+    public ExceptionResponse(String message, LocalDateTime dateTime, List<String> details) {
         this.message = message;
+        this.dateTime = dateTime;
         this.details = details;
     }
 
     private String message;
+
+    private LocalDateTime dateTime;
 
     private List<String> details;
 
@@ -30,5 +31,13 @@ public class ErrorResponse
 
     public void setDetails(List<String> details) {
         this.details = details;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 }
