@@ -31,7 +31,7 @@ public class RestResponseEntityExceptionHandler
     public final ResponseEntity<Object> handleEntityNotFoundException(NotFoundException ex, WebRequest request) {
         List<String> details = new ArrayList<>();
         details.add(ex.getLocalizedMessage());
-        ExceptionResponse error = new ExceptionResponse("Entity Not Found", LocalDateTime.now(), details);
+        ExceptionResponse error = new ExceptionResponse("Record Not Found", LocalDateTime.now(), details);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
