@@ -1,7 +1,7 @@
 # REST API
 This Rest Api has been developed for The Agile Monkeys Api Test.The objective of the project is to manage customer data for a small shop.
 
-##Technologies and libraries used
+## Technologies and libraries used
 - Spring Boot 2.3.4
 - Spring Data JPA
 - Spring Boot Test
@@ -9,18 +9,18 @@ This Rest Api has been developed for The Agile Monkeys Api Test.The objective of
 - Docker
 - OAuth2 authentication
 
-##Features
+## Features
 This Rest Api can perform:
 - User CRUD operations for Admins
 - Customer CRUD operations for Users
 - File upload management for Users
 
-##Prerequisites
+## Prerequisites
 - Java 14
 - Gradle
 - Docker
 
-##Installing
+## Installing
 
 1. Clone Repository
     ```
@@ -62,8 +62,8 @@ This Rest Api can perform:
    docker-compose up -d
    ```  
   
-##Guidelines
-###OAuth2 authentication
+## Guidelines
+### OAuth2 authentication
 
 To be able to use the REST API you need to be authenticated. The authorization is made
 through OAuth 2.0 Password Grant, through which a JWT access token is obtained after making the following request:
@@ -97,7 +97,7 @@ The server replies with an access token in the following format:
   }
    ```  
 
-###Use HTTP methods to operate on collections and entities
+### Use HTTP methods to operate on collections and entities
 
 You can operate on resources using HTTP methods such as `POST`, `GET`, `PUT`, and `DELETE`.
 
@@ -109,7 +109,7 @@ You can perform these operations with both users and customers.
 | /user/{userId}         | Error            | Get user    | Update user if exists  | Delete user        |
 
 
-###Upload and load images
+### Upload and load images
 + To upload and image you need to use the method `POST` and the endpoint `http://localhost:8080/api/file`
 
     The valid formats for the image are BMP, GIF, JPG or PNG and the maximum size allowed is 5 MB.
