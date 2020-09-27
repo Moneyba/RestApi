@@ -61,13 +61,11 @@ This Rest Api can perform:
    cd docker 
    docker-compose up -d
    ```  
-   
-##OAuth2 authentication
-To access to a private API method, it's necesarry to get a access token first.
-To acheive that, wue use the OAuth 2.0 Password Grant authentication doing the following request
-To authenticate to access the private API method:
+  
+##Guidelines
+###OAuth2 authentication
 
-To be able to use the REST API it's necessary to be authenticated. The authorization is made
+To be able to use the REST API you need to be authenticated. The authorization is made
 through OAuth 2.0 Password Grant, through which a JWT access token is obtained after making the following request:
 
    ```  
@@ -81,11 +79,11 @@ through OAuth 2.0 Password Grant, through which a JWT access token is obtained a
     
 The POST parameters in this request are explained below.
 
-- grant_type=password - This tells the server we’re using the Password grant type
-- username= - The username of the user who wants to enter the application
-- password= - The password of the user who wants to enter the application
-- client_id= - The public identifier of the application.
-- client_secret= - The public identifier secret.
+- grant_type=password - This tells the server you’re using the Password grant type
+- username=user@example.com - The username of a registered user who wants to enter the application
+- password=password - The password of the user who wants to enter the application
+- client_id=client - The public identifier of the application. 
+- client_secret=secret - The public identifier secret.
 
 The server replies with an access token in the following format:
 
@@ -99,3 +97,30 @@ The server replies with an access token in the following format:
   }
    ```  
 
+###Use HTTP methods to operate on collections and entities
+
+You can operate on resources using HTTP methods such as `POST`, `GET`, `PUT`, and `DELETE`.
+
+You can perform these operations with both users and customers.
+
+| Resource / HTTP method | POST (create)    | GET (read)  | PUT (update)           | DELETE (delete)    |
+| ---------------------- | ---------------- | ----------- | ---------------------- | ------------------ |
+| /user                  | Create new user  | List users  | Error                  | Error              |
+| /user/{userId}         | Error            | Get user    | Update user if exists  | Delete user        |
+
+
+###Upload and load images
++ To upload and image you need to use the method `POST` and the endpoint `http://localhost:8080/api/file`
+
+    The valid formats for the image are BMP, GIF, JPG or PNG and the maximum size allowed is 5 MB.
+
+    You will receive a successful message with a file name in UUID format.
+
+   ```  
+    {
+        "message": "Uploaded the file successfully: 5b192c03-ecd4-4c73-b102-7be4ee91cbde.png"
+    }
+   ```  
++ To load an image you only need to use the method `GET` and the endpoint `http://localhost:8080/api/file/{fileName:.+}`
+    
+    The file name must be in UUID format.

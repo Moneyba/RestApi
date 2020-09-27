@@ -1,7 +1,7 @@
 package com.theam.rest.api.controller;
 
 import com.theam.rest.api.message.ResponseMessage;
-import com.theam.rest.api.service.FileStorageService;
+import com.theam.rest.api.service.ImageStorageService;
 import com.theam.rest.api.service.impl.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,14 +41,14 @@ class FileStorageControllerTest {
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
     @MockBean
-    private FileStorageService fileStorageService;
+    private ImageStorageService imageStorageService;
 
 
     @Test
     void whenUploadAFile_thenResponseMessageIsReturned() throws Exception {
         MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("file", "image.png", "multipart/form-data", "some_image".getBytes());
-        when(fileStorageService.storageFile(any(MultipartFile.class))).thenReturn("fileName");
+        when(imageStorageService.storageFile(any(MultipartFile.class))).thenReturn("fileName");
         ResponseMessage responseMessage = new ResponseMessage("Uploaded the file successfully: fileName");
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(FILE_STORAGE_ENDPOINT)
@@ -66,7 +66,7 @@ class FileStorageControllerTest {
         UrlResource mockResource = Mockito.mock(UrlResource.class);
 
         when(mockResource.getInputStream()).thenReturn(is);
-        when(fileStorageService.loadFile("fileName")).thenReturn(mockResource);
+        when(imageStorageService.loadFile("fileName")).thenReturn(mockResource);
 
         mockMvc.perform(MockMvcRequestBuilders.get(FILE_STORAGE_ENDPOINT + "/fileName")
                 .contentType(MediaType.MULTIPART_FORM_DATA))
