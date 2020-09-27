@@ -61,7 +61,7 @@ public class ImageStorageServiceImpl implements ImageStorageService {
     private void checkIfFileIsAnImage(MultipartFile file) throws IOException {
         InputStream input = file.getInputStream();
         try {
-            ImageIO.read(input);
+            ImageIO.read(input).toString();
         } catch (Exception e) {
             throw new InvalidFieldException("The file is not a image");
         }

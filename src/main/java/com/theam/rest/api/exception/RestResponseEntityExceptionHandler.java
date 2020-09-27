@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class RestResponseEntityExceptionHandler
         List<String> details = new ArrayList<>();
         details.add(ex.getLocalizedMessage());
 
-        ExceptionResponse error = new ExceptionResponse("Server Error", LocalDateTime.now(), details);
+        ExceptionResponse error = new ExceptionResponse("Server Error", details);
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -31,7 +30,7 @@ public class RestResponseEntityExceptionHandler
     public final ResponseEntity<Object> handleEntityNotFoundException(NotFoundException ex, WebRequest request) {
         List<String> details = new ArrayList<>();
         details.add(ex.getLocalizedMessage());
-        ExceptionResponse error = new ExceptionResponse("Record Not Found", LocalDateTime.now(), details);
+        ExceptionResponse error = new ExceptionResponse("Record Not Found", details);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
@@ -39,7 +38,7 @@ public class RestResponseEntityExceptionHandler
     public final ResponseEntity<Object> handleUniqueConstraintException(UniqueConstraintException ex, WebRequest request) {
         List<String> details = new ArrayList<>();
         details.add(ex.getLocalizedMessage());
-        ExceptionResponse error = new ExceptionResponse("Unique Constraint Exception", LocalDateTime.now(), details);
+        ExceptionResponse error = new ExceptionResponse("Unique Constraint Exception", details);
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
@@ -47,7 +46,7 @@ public class RestResponseEntityExceptionHandler
     public final ResponseEntity<Object> handleInvalidFieldException(InvalidFieldException ex, WebRequest request) {
         List<String> details = new ArrayList<>();
         details.add(ex.getLocalizedMessage());
-        ExceptionResponse error = new ExceptionResponse("Invalid Field", LocalDateTime.now(), details);
+        ExceptionResponse error = new ExceptionResponse("Invalid Field", details);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
@@ -58,7 +57,7 @@ public class RestResponseEntityExceptionHandler
         for(ObjectError error : ex.getBindingResult().getAllErrors()) {
             details.add(error.getDefaultMessage());
         }
-        ExceptionResponse error = new ExceptionResponse("Validation Failed", LocalDateTime.now(), details);
+        ExceptionResponse error = new ExceptionResponse("Validation Failed", details);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 

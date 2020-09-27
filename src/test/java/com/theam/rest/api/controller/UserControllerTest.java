@@ -14,11 +14,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,12 +48,7 @@ class UserControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
-
     @Test
-    @WithMockUser(username="mockedUser", roles={"ADMIN"})
     void whenRequestUsers_thenTheUserListIsReturned() throws Exception{
         UserDto user1 = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), "***");
         UserDto user2 = new UserDto(2L, "user@theam.com", Collections.singletonList("ROLE_USER"), "***");
@@ -70,7 +63,6 @@ class UserControllerTest {
 
 
     @Test
-    @WithMockUser(username="mockedUser", roles={"ADMIN"})
     void whenCreateUser_thenTheUserIsReturned() throws Exception {
         UserDto userDto = new UserDto(null,  "user@theam.com", Collections.singletonList("ROLE_USER"), null);
         when(userConverter.convertFromDto(any(UserDto.class))).thenReturn(new User());
@@ -84,7 +76,6 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username="mockedUser", roles={"ADMIN"})
     void whenUpdateUser_thenTheUpdatedUserIsReturned() throws Exception {
         UserDto userDto = new UserDto(1L, "user@theam.com", Collections.singletonList("ROLE_USER"), null);
         when(userConverter.convertFromDto(any(UserDto.class))).thenReturn(new User());
@@ -98,7 +89,6 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username="mockedUser", roles={"ADMIN"})
     void whenUserDeleteCustomer_thenReturns200() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(USER_ENDPOINT + "/1")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -107,7 +97,6 @@ class UserControllerTest {
 
 
     @Test
-    @WithMockUser(username="mockedUser", roles={"ADMIN"})
     void whenValidInput_thenReturns200() throws Exception {
         UserDto userDto = new UserDto(null, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), "***");
         mockMvc.perform(MockMvcRequestBuilders.post(USER_ENDPOINT)
@@ -117,7 +106,6 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username="mockedUser", roles={"ADMIN"})
     void whenNullUsername_thenReturns400AndErrorResult() throws Exception {
         UserDto userDto = new UserDto(null, null, Collections.singletonList("ROLE_ADMIN"), "*****");
         mockMvc.perform(MockMvcRequestBuilders.post(USER_ENDPOINT)

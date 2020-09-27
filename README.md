@@ -24,7 +24,7 @@ This Rest Api can perform:
 
 1. Clone Repository
     ```
-    git clone https://github.com/Moneyba/api.git
+    git clone https://github.com/Moneyba/RestApi.git
     cd RestApi
     ```
    
@@ -89,7 +89,7 @@ The server replies with an access token in the following format:
 
    ```  
   {
-      "access_token": "*** JWT token ***"
+      "access_token": "*** JWT token ***",
       "token_type": "bearer",
       "expires_in": 86399,
       "scope": "user_info",

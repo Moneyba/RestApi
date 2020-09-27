@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,8 +49,8 @@ class FileStorageControllerTest {
     void whenUploadAFile_thenResponseMessageIsReturned() throws Exception {
         MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("file", "image.png", "multipart/form-data", "some_image".getBytes());
-        when(imageStorageService.storageFile(any(MultipartFile.class))).thenReturn("fileName");
-        ResponseMessage responseMessage = new ResponseMessage("Uploaded the file successfully: fileName");
+        when(imageStorageService.storageFile(any(MultipartFile.class))).thenReturn("5b192c03-ecd4-4c73-b102-7be4ee91cbde.png");
+        ResponseMessage responseMessage = new ResponseMessage("Uploaded the file successfully: 5b192c03-ecd4-4c73-b102-7be4ee91cbde.png");
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(FILE_STORAGE_ENDPOINT)
                 .file(mockMultipartFile)
@@ -66,9 +67,9 @@ class FileStorageControllerTest {
         UrlResource mockResource = Mockito.mock(UrlResource.class);
 
         when(mockResource.getInputStream()).thenReturn(is);
-        when(imageStorageService.loadFile("fileName")).thenReturn(mockResource);
+        when(imageStorageService.loadFile(anyString())).thenReturn(mockResource);
 
-        mockMvc.perform(MockMvcRequestBuilders.get(FILE_STORAGE_ENDPOINT + "/fileName")
+        mockMvc.perform(MockMvcRequestBuilders.get(FILE_STORAGE_ENDPOINT + "/5b192c03-ecd4-4c73-b102-7be4ee91cbde.png")
                 .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(MockMvcResultMatchers.status().is(200));
 

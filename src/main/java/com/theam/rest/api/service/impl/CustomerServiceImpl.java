@@ -46,7 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer update(Long id, Customer customer) {
         log.info("Trying to update customer with id " + customer.getId());
-        Customer customerDB = this.findById(customer.getId());
+        Customer customerDB = this.findById(id);
         customerDB.setName(customer.getName());
         customerDB.setSurname(customer.getSurname());
         customerDB.setPhotoUrl(customer.getPhotoUrl());

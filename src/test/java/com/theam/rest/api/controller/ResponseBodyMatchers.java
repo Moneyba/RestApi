@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theam.rest.api.exception.ExceptionResponse;
 import org.springframework.test.web.servlet.ResultMatcher;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +22,7 @@ public class ResponseBodyMatchers {
     public ResultMatcher containsError(String expectedMessage, String expectedDetail) {
         return mvcResult -> {
             ExceptionResponse expectedError =
-                    new ExceptionResponse(expectedMessage, LocalDateTime.now(), Collections.singletonList(expectedDetail));
+                    new ExceptionResponse(expectedMessage, Collections.singletonList(expectedDetail));
             String actualResponseBody =
                     mvcResult.getResponse().getContentAsString();
             String expectedResponseBody =

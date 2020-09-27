@@ -1,6 +1,7 @@
 package com.theam.rest.api.service.impl;
 
 import com.theam.rest.api.dao.UserDao;
+import com.theam.rest.api.exception.InvalidFieldException;
 import com.theam.rest.api.exception.NotFoundException;
 import com.theam.rest.api.exception.UniqueConstraintException;
 import com.theam.rest.api.model.User;
@@ -38,10 +39,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User user) {
         log.info("Trying to save user with username " + user.getUsername());
+        this.checkIfPasswordIsEmpty(user.getPassword());
         userDao.findByUsername(user.getUsername())
                 .ifPresent(function -> { throw new UniqueConstraintException("A user with the given username already exists"); });
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userDao.save(user);
+    }
+
+    private void checkIfPasswordIsEmpty(String password) {
+        if(password.equals("")) {
+            throw new InvalidFieldException("Password can't be empty");
+        }
     }
 
     @Override
@@ -49,8 +57,10 @@ public class UserServiceImpl implements UserService {
         log.info("Trying to update user with username " + user.getUsername());
         User userFromDb = this.findById(userId);
         this.checkIfUsernameAlreadyExists(user, userFromDb);
-        user.setPassword(this.findPassword(user, userFromDb));
-        return userDao.save(user);
+        userFromDb.setUsername(user.getUsername());
+        userFromDb.setPassword(this.findPassword(user, userFromDb));
+        userFromDb.setRoles(user.getRoles());
+        return userDao.save(userFromDb);
     }
 
     private void checkIfUsernameAlreadyExists(User user, User userFromDb) {
@@ -75,7 +85,7 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long userId) {
         log.info("Trying to delete user with id " + userId);
         User user = findById(userId);
-        user.setDeleted(false);
+        user.setDeleted(true);
         userDao.save(user);
     }
 

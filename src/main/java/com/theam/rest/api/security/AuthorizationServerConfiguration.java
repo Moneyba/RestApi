@@ -31,11 +31,10 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         clients
                 .inMemory()
                 .withClient("client")
-                .authorizedGrantTypes("password", "refresh_token")
+                .authorizedGrantTypes("password")
                 .secret(passwordEncoder.encode("secret"))
-                .accessTokenValiditySeconds(24 * 60 * 60)
-                .scopes("user_info")
-                .autoApprove(true);
+                .accessTokenValiditySeconds(365 * 24 * 60 * 60)
+                .scopes("user_info");
     }
 
     @Override

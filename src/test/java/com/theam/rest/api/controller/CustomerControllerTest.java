@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -52,7 +51,6 @@ class CustomerControllerTest {
     ObjectMapper objectMapper;
 
     @Test
-    @WithMockUser(username="mockedUser")
     void whenUserRequestTheCustomers_thenTheCustomerListIsReturned() throws Exception{
         UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
         CustomerDto customer1 = new CustomerDto(1L,"Cesar", "Manrique", null, userDto,null);
@@ -67,7 +65,6 @@ class CustomerControllerTest {
     }
 
     @Test
-    @WithMockUser(username="mockedUser")
     void whenUserRequestCustomerInformation_thenTheCustomerIsReturned() throws Exception {
         String photoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQL59nSXkNhqkVAzpGeRdRbFre1-JEBbQhaCA&usqp=CAU";
         UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
@@ -81,7 +78,6 @@ class CustomerControllerTest {
     }
 
     @Test
-    @WithMockUser(username="mockedUser")
     void whenUserCreateCustomer_thenTheCustomerIsReturned() throws Exception {
         UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
         CustomerDto customerDto = new CustomerDto(1L,"Zelda", "Orwell", null, userDto,null);
@@ -96,7 +92,6 @@ class CustomerControllerTest {
     }
 
     @Test
-    @WithMockUser(username="mockedUser")
     void whenUserUpdateCustomer_thenTheUpdatedCustomerIsReturned() throws Exception {
         UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
         CustomerDto customerDto = new CustomerDto(1L,"Zelda", "Orwell", null, userDto,null);
@@ -111,7 +106,6 @@ class CustomerControllerTest {
     }
 
     @Test
-    @WithMockUser(username="mockedUser")
     void whenUserDeleteCustomer_thenReturns200() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(CUSTOMER_ENDPOINT + "/1")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -119,7 +113,6 @@ class CustomerControllerTest {
     }
 
     @Test
-    @WithMockUser(username="mockedUser")
     void whenNullCustomerName_thenReturns400() throws Exception {
         UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
         CustomerDto customerDto = new CustomerDto(1L,null, "Orwell", null, userDto,null);
