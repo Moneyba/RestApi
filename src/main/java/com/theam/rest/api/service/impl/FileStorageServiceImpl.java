@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 @Service
-public class FileFileStorageServiceImpl implements FileStorageService {
+public class FileStorageServiceImpl implements FileStorageService {
 
     @Value("${upload-folder}")
     private String uploadFolder;

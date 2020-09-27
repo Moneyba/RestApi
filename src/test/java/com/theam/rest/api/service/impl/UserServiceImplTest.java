@@ -1,6 +1,5 @@
 package com.theam.rest.api.service.impl;
 
-import com.theam.rest.api.converter.UserConverter;
 import com.theam.rest.api.dao.UserDao;
 import com.theam.rest.api.exception.NotFoundException;
 import com.theam.rest.api.exception.UniqueConstraintException;
@@ -29,29 +28,15 @@ class UserServiceImplTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private UserConverter userConverter;
-
     @InjectMocks
     private UserServiceImpl userServiceImpl;
 
-    private String username = "user@theam.com";
+    private final String username = "user@theam.com";
 
     @Test
     void whenFindAll_shouldCallUserDaoFindAll() {
         userServiceImpl.findAll();
         verify(userDao).findAll();
-    }
-
-    @Test
-    void savedUserHasUsername() {
-        User user = new User();
-        Role role = new Role(1L, "ROLE_ADMIN");
-        user.setRoles(Collections.singletonList(role));
-        user.setUsername(username);
-        when(userDao.save(any(User.class))).then(returnsFirstArg());
-        User savedUser = userServiceImpl.save(user);
-        UserAssert.assertThat(savedUser).hasUsername();
     }
 
     @Test

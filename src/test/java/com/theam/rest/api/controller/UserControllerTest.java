@@ -56,7 +56,7 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username="mockedUser", roles={"ADMIN"})
-    void whenUserRequestTheUsers_thenTheUserListIsReturned() throws Exception{
+    void whenRequestUsers_thenTheUserListIsReturned() throws Exception{
         UserDto user1 = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), "***");
         UserDto user2 = new UserDto(2L, "user@theam.com", Collections.singletonList("ROLE_USER"), "***");
         List<UserDto> users = Arrays.asList(user1, user2);

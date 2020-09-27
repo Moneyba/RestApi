@@ -30,11 +30,12 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients
                 .inMemory()
-                .withClient("app")
-                .authorizedGrantTypes("password", "refresh_token")
-                .scopes("read", "write")
+                .withClient("client")
+                .authorizedGrantTypes("password")
                 .secret(passwordEncoder.encode("secret"))
-                .accessTokenValiditySeconds(24 * 60 * 60);
+                .accessTokenValiditySeconds(24 * 60 * 60)
+                .scopes("user_info")
+                .autoApprove(true);
     }
 
     @Override

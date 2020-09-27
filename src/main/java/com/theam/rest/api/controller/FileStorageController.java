@@ -13,18 +13,18 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 @RestController
-@RequestMapping("api/images")
-public class FileController {
+@RequestMapping("api/file")
+public class FileStorageController {
     private final FileStorageService fileStorageService;
 
-    public FileController(FileStorageService fileStorageService) {
+    public FileStorageController(FileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
     }
 
     @PostMapping
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         String fileName = fileStorageService.storageFile(file);
-        String message = "Uploaded the file successfully: " + fileName;
+        String message = "Uploaded the file successfully: " + fileName    ;
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseMessage(message));
     }
