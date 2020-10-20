@@ -21,8 +21,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
@@ -52,7 +52,7 @@ class CustomerControllerTest {
 
     @Test
     void whenUserRequestTheCustomers_thenTheCustomerListIsReturned() throws Exception{
-        UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
+        UserDto userDto = new UserDto(1L, "admin@theam.com", Set.of("ROLE_ADMIN"), null);
         CustomerDto customer1 = new CustomerDto(1L,"Cesar", "Manrique", null, userDto,null);
         CustomerDto customer2 = new CustomerDto(2L,"Salvador", "Dali", null, userDto,null);
         List<CustomerDto> customers = Arrays.asList(customer1, customer2);
@@ -67,7 +67,7 @@ class CustomerControllerTest {
     @Test
     void whenUserRequestCustomerInformation_thenTheCustomerIsReturned() throws Exception {
         String photoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQL59nSXkNhqkVAzpGeRdRbFre1-JEBbQhaCA&usqp=CAU";
-        UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
+        UserDto userDto = new UserDto(1L, "admin@theam.com", Set.of("ROLE_ADMIN"), null);
         CustomerDto customerDto = new CustomerDto(1L,"Zelda", "Orwell", photoUrl, userDto,null);
         when(customerService.findById(anyLong())).thenReturn(new Customer());
         when(customerConverter.convertFromEntity(any(Customer.class))).thenReturn(customerDto);
@@ -79,11 +79,13 @@ class CustomerControllerTest {
 
     @Test
     void whenUserCreateCustomer_thenTheCustomerIsReturned() throws Exception {
-        UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
+        UserDto userDto = new UserDto(1L, "admin@theam.com", Set.of("ROLE_ADMIN"), null);
         CustomerDto customerDto = new CustomerDto(1L,"Zelda", "Orwell", null, userDto,null);
+
         when(customerConverter.convertFromDto(any(CustomerDto.class))).thenReturn(new Customer());
         when(customerService.save(any(Customer.class))).thenReturn(new Customer());
         when(customerConverter.convertFromEntity(any(Customer.class))).thenReturn(customerDto);
+
         mockMvc.perform(MockMvcRequestBuilders.post(CUSTOMER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(customerDto)))
@@ -91,9 +93,10 @@ class CustomerControllerTest {
                 .andExpect(ResponseBodyMatchers.responseBody().containsObjectAsJson(customerDto));
     }
 
+
     @Test
     void whenUserUpdateCustomer_thenTheUpdatedCustomerIsReturned() throws Exception {
-        UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
+        UserDto userDto = new UserDto(1L, "admin@theam.com", Set.of("ROLE_ADMIN"), null);
         CustomerDto customerDto = new CustomerDto(1L,"Zelda", "Orwell", null, userDto,null);
         when(customerConverter.convertFromDto(any(CustomerDto.class))).thenReturn(new Customer());
         when(customerService.update(anyLong(), any(Customer.class))).thenReturn(new Customer());
@@ -114,7 +117,7 @@ class CustomerControllerTest {
 
     @Test
     void whenNullCustomerName_thenReturns400() throws Exception {
-        UserDto userDto = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), null);
+        UserDto userDto = new UserDto(1L, "admin@theam.com", Set.of("ROLE_ADMIN"), null);
         CustomerDto customerDto = new CustomerDto(1L,null, "Orwell", null, userDto,null);
         mockMvc.perform(MockMvcRequestBuilders.post(CUSTOMER_ENDPOINT)
                 .content(objectMapper.writeValueAsString(customerDto))

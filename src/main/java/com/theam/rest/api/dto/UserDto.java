@@ -1,24 +1,32 @@
 package com.theam.rest.api.dto;
 
+import com.theam.rest.api.constraint.ValidPassword;
+
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Set;
 
 public class UserDto {
     private Long id;
 
     @NotNull(message = "A username needs to be defined")
+    @Email
     private String username;
 
     @NotEmpty(message = "The user must have a role assigned")
-    private List<String> roles;
+    private Set<String> roles;
 
+    @ValidPassword
     private String password;
 
     public UserDto() {
     }
 
-    public UserDto(Long id, @NotNull(message = "A username needs to be defined") String username, @NotEmpty(message = "The user must have a role assigned") List<String> roles, String password) {
+    public UserDto(Long id,
+                   @NotNull(message = "A username needs to be defined")  @Email String username,
+                   @NotEmpty(message = "The user must have a role assigned") Set<String> roles,
+                   String password) {
         this.id = id;
         this.username = username;
         this.roles = roles;
@@ -41,11 +49,11 @@ public class UserDto {
         this.username = username;
     }
 
-    public List<String> getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<String> roles) {
+    public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
 

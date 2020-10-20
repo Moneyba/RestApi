@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Set;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -50,8 +50,8 @@ class UserControllerTest {
 
     @Test
     void whenRequestUsers_thenTheUserListIsReturned() throws Exception{
-        UserDto user1 = new UserDto(1L, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), "***");
-        UserDto user2 = new UserDto(2L, "user@theam.com", Collections.singletonList("ROLE_USER"), "***");
+        UserDto user1 = new UserDto(1L, "admin@theam.com", Set.of("ROLE_ADMIN"), "***");
+        UserDto user2 = new UserDto(2L, "user@theam.com", Set.of("ROLE_USER"), "***");
         List<UserDto> users = Arrays.asList(user1, user2);
         when(userService.findAll()).thenReturn(new ArrayList<>());
         when(userConverter.convertFromEntityCollection(anyCollection())).thenReturn(users);
@@ -64,7 +64,7 @@ class UserControllerTest {
 
     @Test
     void whenCreateUser_thenTheUserIsReturned() throws Exception {
-        UserDto userDto = new UserDto(null,  "user@theam.com", Collections.singletonList("ROLE_USER"), null);
+        UserDto userDto = new UserDto(null,  "user@theam.com", Set.of("ROLE_USER"), "Password.1");
         when(userConverter.convertFromDto(any(UserDto.class))).thenReturn(new User());
         when(userService.save(any(User.class))).thenReturn(new User());
         when(userConverter.convertFromEntity(any(User.class))).thenReturn(userDto);
@@ -77,7 +77,7 @@ class UserControllerTest {
 
     @Test
     void whenUpdateUser_thenTheUpdatedUserIsReturned() throws Exception {
-        UserDto userDto = new UserDto(1L, "user@theam.com", Collections.singletonList("ROLE_USER"), null);
+        UserDto userDto = new UserDto(1L, "user@theam.com", Set.of("ROLE_USER"), null);
         when(userConverter.convertFromDto(any(UserDto.class))).thenReturn(new User());
         when(userService.update(anyLong(), any(User.class))).thenReturn(new User());
         when(userConverter.convertFromEntity(any(User.class))).thenReturn(userDto);
@@ -98,7 +98,7 @@ class UserControllerTest {
 
     @Test
     void whenValidInput_thenReturns200() throws Exception {
-        UserDto userDto = new UserDto(null, "admin@theam.com", Collections.singletonList("ROLE_ADMIN"), "***");
+        UserDto userDto = new UserDto(null, "admin@theam.com", Set.of("ROLE_ADMIN"), "Password.1");
         mockMvc.perform(MockMvcRequestBuilders.post(USER_ENDPOINT)
                 .content(objectMapper.writeValueAsString(userDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -107,7 +107,7 @@ class UserControllerTest {
 
     @Test
     void whenNullUsername_thenReturns400AndErrorResult() throws Exception {
-        UserDto userDto = new UserDto(null, null, Collections.singletonList("ROLE_ADMIN"), "*****");
+        UserDto userDto = new UserDto(null, null, Set.of("ROLE_ADMIN"), "Password.1");
         mockMvc.perform(MockMvcRequestBuilders.post(USER_ENDPOINT)
           .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))

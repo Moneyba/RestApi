@@ -13,8 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -57,7 +57,7 @@ class UserServiceImplTest {
     @Test
     void whenANewUserIsCreatedSuccessfully_thenTheUserIsReturned() {
         Role role = new Role(1L, "ROLE_ADMIN");
-        User expectedUser = new User(null, username, "password", false, Collections.singletonList(role));
+        User expectedUser = new User(null, username, "password", false, Set.of(role));
         when(userDao.findByUsername(username)).thenReturn(Optional.empty());
         when(userDao.save(expectedUser)).then(returnsFirstArg());
         userServiceImpl.save(expectedUser);
@@ -76,7 +76,7 @@ class UserServiceImplTest {
     @Test
     void whenPasswordIsEmpty_thenThereIsAnInvalidFieldException() {
         Role role = new Role(1L, "ROLE_ADMIN");
-        User expectedUser = new User(null, username, "", false, Collections.singletonList(role));
+        User expectedUser = new User(null, username, "", false, Set.of(role));
         assertThrows(InvalidFieldException.class, () -> userServiceImpl.save(expectedUser));
     }
 
@@ -84,7 +84,7 @@ class UserServiceImplTest {
     void whenAUserIsUpdatedSuccessfully_thenTheUserIsReturned() {
         Long userId = 1L;
         Role role = new Role(1L, "ROLE_ADMIN");
-        User expectedUser = new User(userId, username, "password", false, Collections.singletonList(role));
+        User expectedUser = new User(userId, username, "password", false, Set.of(role));
         when(userDao.findByUsername(username)).thenReturn(Optional.empty());
         when(userDao.save(expectedUser)).then(returnsFirstArg());
         userServiceImpl.save(expectedUser);
