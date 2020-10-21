@@ -7,7 +7,7 @@ import com.theam.rest.api.model.Role;
 import com.theam.rest.api.model.User;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,7 +27,7 @@ public class UserConverter extends GenericConverter<User, UserDto> {
         user.setUsername(dto.getUsername());
         user.setPassword(HIDDEN_PASSWORD.equals(dto.getPassword()) || dto.getPassword() == null ? "" : dto.getPassword());
         user.setDeleted(false);
-        List<Role> roles = roleDao.findByNameIn(dto.getRoles());
+        Set<Role> roles = roleDao.findByNameIn(dto.getRoles());
         if (roles.size() != dto.getRoles().size()) {throw new InvalidFieldException("Invalid Role");}
         user.setRoles(roles);
         return user;
@@ -38,7 +38,7 @@ public class UserConverter extends GenericConverter<User, UserDto> {
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
         userDto.setPassword(HIDDEN_PASSWORD);
-        userDto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
+        userDto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
         return userDto;
     }
 }

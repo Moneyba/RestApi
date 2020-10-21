@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @PutMapping(path = "/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserDto update(@PathVariable Long userId, @Valid @RequestBody UserDto userDto) {
+    public UserDto update(@PathVariable Long userId, @RequestBody UserDto userDto) {
         log.info("METHOD UserController.update");
         User user = userConverter.convertFromDto(userDto);
         return userConverter.convertFromEntity(userService.update(userId, user));

@@ -3,9 +3,10 @@ package com.theam.rest.api.model;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Where(clause = "deleted = false")
@@ -18,6 +19,7 @@ public class User {
 
     @Column(name = "username", nullable = false, unique = true)
     @NotNull(message = "A username needs to be defined")
+    @Email
     private String username;
 
     @Column(name = "password", nullable = false)
@@ -33,12 +35,12 @@ public class User {
             name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    private List<Role> roles;
+    private Set<Role> roles;
 
     public User() {
     }
 
-    public User(Long id, @NotNull(message = "A username needs to be defined") String username, @NotNull(message = "A password needs to be defined") String password, Boolean deleted, @NotEmpty(message = "The user must have a role assigned") List<Role> roles) {
+    public User(Long id, @NotNull(message = "A username needs to be defined") String username, @NotNull(message = "A password needs to be defined") String password, Boolean deleted, @NotEmpty(message = "The user must have a role assigned") Set<Role> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -78,11 +80,11 @@ public class User {
         this.deleted = deleted;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 }

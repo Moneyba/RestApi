@@ -97,6 +97,8 @@ The server replies with an access token in the following format:
   }
    ```  
 
+
+
 ### Use HTTP methods to operate on collections and entities
 
 You can operate on resources using HTTP methods such as `POST`, `GET`, `PUT`, and `DELETE`.
@@ -107,6 +109,30 @@ You can perform these operations with both users and customers.
 | ---------------------- | ---------------- | ----------- | ---------------------- | ------------------ |
 | /user                  | Create new user  | List users  | Error                  | Error              |
 | /user/{userId}         | Error            | Get user    | Update user if exists  | Delete user        |
+
+
+### Input Validations
+
++ User
+
+    The username must be an email.
+
+    The password follows the following rules:
+    +  It must be at least 8 characters in length.
+    +  It must contain at least 1 uppercase character.
+    +  It must contain at least 1 digit character.
+    +  It must contain at least 1 special characters.
+
++ Customer
+    
+    The customer's name follows the following rules:
+    + It can contain several strings between spaces.
+    + It can start or end only with a letter.
+    + It cannot contain consecutive spaces.
+    + Its size must be between 2 and 20.
+    
+    The size of the customer's surname must be between 2 and 15 and only letters are allowed.
+
 
 
 ### Upload and load images

@@ -1,15 +1,21 @@
 package com.theam.rest.api.dto;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 public class CustomerDto {
 
     private Long id;
 
     @NotNull(message = "A name needs to be defined")
+    @Size(min= 2, max = 20)
+    @Pattern(regexp = "^([A-zÀ-ú]+\\s)*[A-zÀ-ú]+$", message = "Name must contains only letters or spaces")
     private String name;
 
-    @NotNull(message = "A surname needs to be defined")
+    @NotNull(message = "A surname needs to be defined.")
+    @Size(min= 2, max = 15)
+    @Pattern(regexp = "^[A-zÀ-ú]+$", message = "Surname must be a string")
     private String surname;
 
     private String photoUrl;
@@ -21,7 +27,18 @@ public class CustomerDto {
     public CustomerDto() {
     }
 
-    public CustomerDto(Long id, @NotNull(message = "A name needs to be defined") String name, @NotNull(message = "A surname needs to be defined") String surname, String photoUrl, UserDto createdBy, UserDto modifiedBy) {
+    public CustomerDto(Long id,
+                       @NotNull(message = "A name needs to be defined")
+                       @Size(min = 2, max = 20)
+                       @Pattern(regexp = "^([A-zÀ-ú]+\\s)*[A-zÀ-ú]+$", message = "Name must contains only letters or spaces")
+                               String name,
+                       @NotNull(message = "A surname needs to be defined.")
+                       @Size(min = 2, max = 15)
+                       @Pattern(regexp = "^[A-zÀ-ú]+$", message = "Surname must be a string")
+                               String surname,
+                       String photoUrl,
+                       UserDto createdBy,
+                       UserDto modifiedBy) {
         this.id = id;
         this.name = name;
         this.surname = surname;

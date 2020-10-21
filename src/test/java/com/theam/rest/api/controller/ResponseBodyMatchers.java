@@ -33,7 +33,6 @@ public class ResponseBodyMatchers {
 
     }
 
-
     static ResponseBodyMatchers responseBody(){
         return new ResponseBodyMatchers();
     }
